@@ -49,10 +49,29 @@ async function list(req, res, next) {
   res.json({ data });
 }
 
+// add a handler for the 'listOutOfStockCount()' method you built in the service file:
+async function listOutOfStockCount(req, res, next) {
+  res.json({ data: await productsService.listOutOfStockCount() });
+}
+
+// handler for the 'listPriceSummary()' method in the service file:
+async function listPriceSummary(req, res, next) {
+  res.json({ data: await productsService.listPriceSummary() });
+}
+
+// handler for the 'listTotalWeightByProduct()' method in the service file:
+async function listTotalWeightByProduct(req, res) {
+  res.json({ data: await productsService.listTotalWeightByProduct() });
+}
+
 // EXPORT MODULE //
 
-// add 'asyncErrorBoundary' to the export:
+// add 'asyncErrorBoundary' to the export
+// add your query builer method handlers to the export
 module.exports = {
   read: [asyncErrorBoundary(productExists), asyncErrorBoundary(read)],
   list: asyncErrorBoundary(list),
+  listOutOfStockCount: asyncErrorBoundary(listOutOfStockCount),
+  listPriceSummary: asyncErrorBoundary(listPriceSummary),
+  listTotalWeightByProduct: asyncErrorBoundary(listTotalWeightByProduct),
 };
