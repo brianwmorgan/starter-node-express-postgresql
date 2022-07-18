@@ -1,9 +1,36 @@
 const knex = require("../db/connection");
+// require the 'mapProperties()' function...
+const mapProperties = require("../utils/map-properties");
+
+// define the 'addCategory' configuration object...
+const addCategory = mapProperties({
+  category_id: "category.category_id",
+  category_name: "category.category_name",
+  category_description: "category.category_description",
+});
+
+// In the above configuration, the values specify the "path" of the property, where '.' is the delimiter.
+// '.' is used like '/' or '\' for a path folder delimiter. If a portion of the path doesn't exist, it's created.
+// Arrays are created for missing index properties while objects are created for all other missing properties.
+// Any property that isn't in the configuration is left unchanged.
 
 // Knex QUERY SERVICES //
 
-function read(productId) {
-  return knex("products").select("*").where({ product_id: productId }).first();
+// function read(productId) {
+//   return knex("products").select("*").where({ product_id: productId }).first();
+// }
+
+// modified the above 'read()' to utilize 'join()' as follows...
+// ... AND chained 'then()' to incorporate the 'category' object:
+
+function read(product_id) {
+  return knex("products as p")
+    .join("products_categories as pc", "p.product_id", "pc.product_id")
+    .join("categories as c", "pc.category_id", "c.category_id")
+    .select("p.*", "c.*")
+    .where({ "p.product_id": product_id })
+    .first()
+    .then(addCategory);
 }
 
 function list() {
